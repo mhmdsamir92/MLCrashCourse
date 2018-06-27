@@ -141,18 +141,27 @@ def train_model(learning_rate, steps, batch_size, input_feature="total_rooms"):
     plt.title("Root Mean Squared Error vs. Periods")
     plt.tight_layout()
     plt.plot(root_mean_squared_errors)
-    plt.show()
-    # Output a table with calibration data.
     calibration_data = pd.DataFrame()
     calibration_data["predictions"] = pd.Series(predictions)
     calibration_data["targets"] = pd.Series(targets)
+    plt.figure(figsize=(15, 6))
+    plt.subplot(1, 2, 1)
+    plt.scatter(calibration_data["predictions"], calibration_data["targets"])
+    plt.subplot(1, 2, 2)
+    _ = california_housing_dataframe["rooms_per_person"].hist()
+    plt.show()
+    # Output a table with calibration data.
     display.display(calibration_data.describe())
     print calibration_data.describe()
     print "Final RMSE (on training data): %0.2f" % root_mean_squared_error
 
+
+california_housing_dataframe["rooms_per_person"] = (
+    california_housing_dataframe["total_rooms"] / california_housing_dataframe["population"])
+
 train_model(
-    learning_rate=0.001,
+    learning_rate=0.05,
     steps=1000,
     batch_size=40,
-    input_feature="population"
+    input_feature="rooms_per_person"
 )
